@@ -7,3 +7,7 @@ services:
     volumes:
       - ./src:/app/src
     command: npx nodemon --legacy-watch src/server.js
+
+  mongo:
+    ports:
+      - "127.0.0.1:27017:27017"
