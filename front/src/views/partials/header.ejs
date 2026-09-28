@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> · SecureBlog</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <header class="brand">
+      <div>
+        <p class="eyebrow">Fil rouge authentification</p>
+        <h1>SecureBlog</h1>
+        <p class="subtitle">v1 — Session</p>
+      </div>
+      <% if (user) { %>
+        <form data-endpoint="/api/logout" data-redirect="/login">
+          <button type="submit" class="btn btn-sm">Se déconnecter</button>
+        </form>
+      <% } %>
+    </header>

@@ -1,9 +1,20 @@
 services:
+  front:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./front/src:/app/src
+    command: npx nodemon --legacy-watch -e js,ejs,css src/server.js
+
   api:
     build:
       target: dev
     environment:
       NODE_ENV: development
+    ports:
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./src:/app/src
     command: npx nodemon --legacy-watch src/server.js

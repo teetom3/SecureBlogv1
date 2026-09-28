@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<section class="card card-narrow">
+  <h2>Inscription</h2>
+
+  <form data-endpoint="/api/register" data-redirect="/login?registered=1" class="form">
+    <input type="email" name="email" placeholder="Email" autocomplete="email" required>
+    <input type="password" name="password" placeholder="Mot de passe (8 caractères minimum)" autocomplete="new-password" minlength="8" maxlength="72" required>
+    <p class="form-error" role="alert" hidden></p>
+    <button type="submit" class="btn">Créer le compte</button>
+  </form>
+
+  <a href="/login" class="link">J'ai déjà un compte</a>
+</section>
+
+<%- include('partials/footer') %>

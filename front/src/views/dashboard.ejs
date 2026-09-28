@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<section class="card">
+  <h2>Bienvenue, <%= user.email %></h2>
+  <p class="muted">Votre session est protégée par un cookie HttpOnly.</p>
+
+  <form data-endpoint="/api/articles" data-redirect="/" class="form">
+    <input type="text" name="title" placeholder="Titre" maxlength="100" required>
+    <textarea name="content" placeholder="Contenu" rows="5" maxlength="2000" required></textarea>
+    <p class="form-error" role="alert" hidden></p>
+    <button type="submit" class="btn">Publier</button>
+  </form>
+</section>
+
+<h2 class="section-title">Articles</h2>
+
+<% if (articles.length === 0) { %>
+  <p class="muted">Aucun article pour le moment.</p>
+<% } %>
+
+<% articles.forEach((article) => { %>
+  <article class="card article">
+    <h3><%= article.title %></h3>
+    <p class="article-content"><%= article.content %></p>
+    <p class="meta">
+      <%= formatDate(article.createdAt) %>
+      <% if (article.author) { %> · <%= article.author.email %><% } %>
+    </p>
+  </article>
+<% }) %>
+
+<%- include('partials/footer') %>

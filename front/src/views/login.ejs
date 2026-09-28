@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<section class="card card-narrow">
+  <h2>Connexion</h2>
+
+  <% if (registered) { %>
+    <p class="form-success">Compte créé, vous pouvez vous connecter.</p>
+  <% } %>
+
+  <form data-endpoint="/api/login" data-redirect="/" class="form">
+    <input type="email" name="email" placeholder="Email" autocomplete="email" required>
+    <input type="password" name="password" placeholder="Mot de passe (8 caractères minimum)" autocomplete="current-password" minlength="8" required>
+    <p class="form-error" role="alert" hidden></p>
+    <button type="submit" class="btn">Se connecter</button>
+  </form>
+
+  <a href="/register" class="link">Créer un compte</a>
+</section>
+
+<%- include('partials/footer') %>
