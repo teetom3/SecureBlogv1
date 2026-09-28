@@ -1,0 +1,9 @@
+services:
+  api:
+    build:
+      target: dev
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./src:/app/src
+    command: npx nodemon --legacy-watch src/server.js
