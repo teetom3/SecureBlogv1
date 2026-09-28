@@ -3,10 +3,10 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
-const connectDB = require('./config/database');
+
 
 dotenv.config();
-connectDB();
+
 const routes = require('./routes');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
