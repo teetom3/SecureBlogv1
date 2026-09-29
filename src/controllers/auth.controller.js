@@ -1,11 +1,6 @@
 const authService = require('../services/auth.service');
-const { sessionCookieName } = require('../config/session');
-
-// Transforme les callbacks de express-session en promesses
-const regenerate = (req) => new Promise((resolve, reject) =>
-  req.session.regenerate((err) => (err ? reject(err) : resolve())));
-const save = (req) => new Promise((resolve, reject) =>
-  req.session.save((err) => (err ? reject(err) : resolve())));
+const { sign } = require('../utils/jwt');
+const { tokenCookieName, tokenCookieOptions } = require('../config/cookie');
 
 exports.register = async (req, res) => {
   const { email, password } = req.body ?? {};
@@ -17,29 +12,23 @@ exports.login = async (req, res) => {
   const { email, password } = req.body ?? {};
   const user = await authService.login(email, password);
 
-  await regenerate(req); // nouvel ID de session → anti fixation de session
-  req.session.userId = user.id;
-  await save(req);
-
+  res.cookie(tokenCookieName, sign(user.id), tokenCookieOptions);
   res.json({ user });
 };
 
 exports.me = async (req, res) => {
-  const user = await authService.getUserById(req.session.userId);
+  const user = await authService.getUserById(req.user.sub);
 
   if (!user) {
-    // l'utilisateur a été supprimé mais la session existe encore
-    req.session.destroy(() => {});
+    // l'utilisateur a été supprimé mais le token est encore valide
+    res.clearCookie(tokenCookieName, tokenCookieOptions);
     return res.status(401).json({ error: 'Non authentifié' });
   }
 
   res.json({ user });
 };
 
-exports.logout = (req, res, next) => {
-  req.session.destroy((err) => {
-    if (err) return next(err);
-    res.clearCookie(sessionCookieName);
-    res.status(204).end();
-  });
+exports.logout = (req, res) => {
+  res.clearCookie(tokenCookieName, tokenCookieOptions);
+  res.status(204).end();
 };

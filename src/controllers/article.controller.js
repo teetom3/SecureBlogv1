@@ -7,6 +7,6 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { title, content } = req.body ?? {};
-  const article = await articleService.create({ title, content, authorId: req.session.userId });
+  const article = await articleService.create({ title, content, authorId: req.user.sub });
   res.status(201).json({ article });
 };

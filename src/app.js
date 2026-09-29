@@ -4,7 +4,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 
 const { corsOrigin } = require('./config');
-const { sessionMiddleware } = require('./config/session');
+const cookieParser = require('cookie-parser');
+
 const routes = require('./routes');
 const notFound = require('./middlewares/notFound');
 const errorHandler = require('./middlewares/errorHandler');
@@ -15,7 +16,8 @@ app.use(helmet());
 app.use(cors({ origin: corsOrigin, credentials: true })); // credentials → le navigateur envoie le cookie
 app.use(express.json({ limit: '10kb' }));
 app.use(morgan('dev'));
-app.use(sessionMiddleware);
+app.use(cookieParser());
+
 
 app.use('/api', routes);
 
