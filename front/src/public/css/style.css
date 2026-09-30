@@ -161,6 +161,19 @@ textarea:focus {
 }
 
 .form-error { background: var(--error-bg); color: var(--error); }
+.form-error-top { margin-bottom: 12px; }
+
+.btn-google {
+  display: block;
+  margin-bottom: 12px;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-google:hover { background: var(--bg); }
 .form-success { background: var(--success-bg); color: var(--success); margin-bottom: 12px; }
 
 /* ---- Articles ---- */

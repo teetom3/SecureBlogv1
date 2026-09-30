@@ -6,6 +6,9 @@
   <% if (registered) { %>
     <p class="form-success">Compte créé, vous pouvez vous connecter.</p>
   <% } %>
+  <% if (googleError) { %>
+    <p class="form-error form-error-top" role="alert">La connexion avec Google a échoué, réessayez.</p>
+  <% } %>
 
   <form data-endpoint="/api/login" data-redirect="/" class="form">
     <input type="email" name="email" placeholder="Email" autocomplete="email" required>
@@ -13,6 +16,9 @@
     <p class="form-error" role="alert" hidden></p>
     <button type="submit" class="btn">Se connecter</button>
   </form>
+
+  <%# un vrai lien (pas un fetch) : le navigateur doit partir sur la page de Google %>
+  <a href="/api/google" class="btn btn-google">Continuer avec Google</a>
 
   <a href="/register" class="link">Créer un compte</a>
 </section>

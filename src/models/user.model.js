@@ -12,22 +12,14 @@ const userSchema = new mongoose.Schema(
       match: [/^\S+@\S+\.\S+$/, "Format d'email invalide"],
     },
     password: {
-      $cond: {
-        if: { $eq: ["$googleId", null] },
-        then: {
-          type: String,
-          required: [true, "Le mot de passe est requis"],
-          minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
-          maxlength: [72, "Le mot de passe ne peut pas dépasser 72 caractères"], // limite de bcrypt
-          select: false,
-        },
-        else: {
-          type: String,
-          select: false,
-        },
+      type: String,
+      required: function () {
+        return !this.googleId;
       },
+      minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
+      maxlength: [72, "Le mot de passe ne peut pas dépasser 72 caractères"], // limite de bcrypt
+      select: false,
     },
-
     googleId: {
       type: String,
       unique: true,

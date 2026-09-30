@@ -9,4 +9,14 @@ const tokenCookieOptions = {
   maxAge: 1000 * 60 * 60,       // 1h (en ms), aligné sur JWT_EXPIRES_IN
 };
 
-module.exports = { tokenCookieName, tokenCookieOptions };
+// Cookie temporaire de la connexion Google (state, nonce, codeVerifier)
+const googleCookieName = 'google';
+const googleCookieOptions = {
+  httpOnly: true,
+  secure: env === 'production',
+  sameSite: 'lax',              // lax (pas strict) : doit revenir lors de la redirection depuis Google
+  maxAge: 1000 * 60 * 10,       // 10 min pour se connecter chez Google
+  path: '/api/google',          // envoyé uniquement aux routes Google
+};
+
+module.exports = { tokenCookieName, tokenCookieOptions, googleCookieName, googleCookieOptions };

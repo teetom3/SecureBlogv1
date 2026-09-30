@@ -1,6 +1,9 @@
 const authService = require('../services/auth.service');
+const googleService = require('../services/google.service');
 const { sign } = require('../utils/jwt');
-const { tokenCookieName, tokenCookieOptions } = require('../config/cookie');
+const {
+  tokenCookieName, tokenCookieOptions, googleCookieName, googleCookieOptions,
+} = require('../config/cookie');
 
 exports.register = async (req, res) => {
   const { email, password } = req.body ?? {};
@@ -31,4 +34,30 @@ exports.me = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie(tokenCookieName, tokenCookieOptions);
   res.status(204).end();
+};
+
+// Aller : on garde state/nonce/codeVerifier dans un cookie temporaire, puis direction Google
+exports.googleStart = (req, res) => {
+  const { url, saved } = googleService.start();
+  res.cookie(googleCookieName, JSON.stringify(saved), googleCookieOptions);
+  res.redirect(url);
+};
+
+// Retour de Google : navigation du navigateur, donc on répond par des redirections (pas du JSON)
+exports.googleCallback = async (req, res) => {
+  // le cookie ne sert qu'une fois, que la connexion réussisse ou échoue
+  const { maxAge, ...clearOptions } = googleCookieOptions;
+  res.clearCookie(googleCookieName, clearOptions);
+
+  try {
+    const saved = JSON.parse(req.cookies?.[googleCookieName] ?? 'null');
+    const identity = await googleService.callback({ query: req.query, saved });
+    const user = await authService.findOrCreateGoogleUser(identity);
+
+    res.cookie(tokenCookieName, sign(user.id), tokenCookieOptions);
+    res.redirect('/');
+  } catch (err) {
+    console.error('Connexion Google refusée :', err.message);
+    res.redirect('/login?error=google');
+  }
 };

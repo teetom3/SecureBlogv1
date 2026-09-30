@@ -33,13 +33,29 @@ exports.login = async (email, password) => {
 
   const user = await User.findOne({ email: email.trim().toLowerCase() }).select('+password');
 
-  const valid = user
+  // un compte créé via Google n'a pas de mot de passe : traité comme "introuvable"
+  const valid = user?.password
     ? await user.comparePassword(password)
     : await bcrypt.compare(password, DUMMY_HASH);
 
   if (!valid) throw httpError(401, 'Identifiants invalides');
 
   return user;
+};
+
+// Connexion Google : retrouve l'utilisateur, relie un compte existant, ou en crée un
+// (appelé uniquement avec un email vérifié par Google, sinon la liaison serait une faille)
+exports.findOrCreateGoogleUser = async ({ googleId, email }) => {
+  const byGoogleId = await User.findOne({ googleId });
+  if (byGoogleId) return byGoogleId;
+
+  const byEmail = await User.findOne({ email: email.toLowerCase() });
+  if (byEmail) {
+    byEmail.googleId = googleId;
+    return byEmail.save();
+  }
+
+  return User.create({ email, googleId });
 };
 
 exports.getUserById = (id) => User.findById(id);

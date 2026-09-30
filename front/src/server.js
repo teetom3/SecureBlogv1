@@ -64,7 +64,11 @@ app.get('/articles/:id/edit', requireUser, async (req, res) => {
 });
 
 app.get('/login', requireGuest, (req, res) => {
-  res.render('login', { title: 'Connexion', registered: req.query.registered === '1' });
+  res.render('login', {
+    title: 'Connexion',
+    registered: req.query.registered === '1',
+    googleError: req.query.error === 'google',
+  });
 });
 
 app.get('/register', requireGuest, (req, res) => {
