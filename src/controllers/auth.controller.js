@@ -1,9 +1,12 @@
 const authService = require('../services/auth.service');
 const googleService = require('../services/google.service');
+const githubService = require('../services/github.service');
 const { sign } = require('../utils/jwt');
-const {
-  tokenCookieName, tokenCookieOptions, googleCookieName, googleCookieOptions,
-} = require('../config/cookie');
+  const {
+    tokenCookieName, tokenCookieOptions,
+    googleCookieName, googleCookieOptions,
+    githubCookieName, githubCookieOptions,
+  }  = require('../config/cookie');
 
 exports.register = async (req, res) => {
   const { email, password } = req.body ?? {};
@@ -59,5 +62,31 @@ exports.googleCallback = async (req, res) => {
   } catch (err) {
     console.error('Connexion Google refusée :', err.message);
     res.redirect('/login?error=google');
+  }
+};
+
+// Aller : on garde state/codeVerifier dans un cookie temporaire, puis direction GitHub
+exports.githubStart = (req, res) => {
+  const { url, saved } = githubService.start();
+  res.cookie(githubCookieName, JSON.stringify(saved), githubCookieOptions);
+  res.redirect(url);
+};
+
+// Retour de GitHub : navigation du navigateur, donc on répond par des redirections (pas du JSON)
+exports.githubCallback = async (req, res) => {
+  // le cookie ne sert qu'une fois, que la connexion réussisse ou échoue
+  const { maxAge, ...clearOptions } = githubCookieOptions;
+  res.clearCookie(githubCookieName, clearOptions);
+
+  try {
+    const saved = JSON.parse(req.cookies?.[githubCookieName] ?? 'null');
+    const identity = await githubService.callback({ query: req.query, saved });
+    const user = await authService.findOrCreateGithubUser(identity);
+
+    res.cookie(tokenCookieName, sign(user.id), tokenCookieOptions);
+    res.redirect('/');
+  } catch (err) {
+    console.error('Connexion GitHub refusée :', err.message);
+    res.redirect('/login?error=github');
   }
 };

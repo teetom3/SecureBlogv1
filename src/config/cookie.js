@@ -19,4 +19,15 @@ const googleCookieOptions = {
   path: '/api/google',          // envoyé uniquement aux routes Google
 };
 
-module.exports = { tokenCookieName, tokenCookieOptions, googleCookieName, googleCookieOptions };
+// Cookie temporaire de la connexion GitHub (state, codeVerifier)
+const githubCookieName = 'github';
+const githubCookieOptions = {
+  ...googleCookieOptions,
+  path: '/api/github',          // envoyé uniquement aux routes GitHub
+};
+
+module.exports = {
+  tokenCookieName, tokenCookieOptions,
+  googleCookieName, googleCookieOptions,
+  githubCookieName, githubCookieOptions,
+};

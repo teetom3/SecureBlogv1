@@ -9,6 +9,9 @@
   <% if (googleError) { %>
     <p class="form-error form-error-top" role="alert">La connexion avec Google a échoué, réessayez.</p>
   <% } %>
+  <% if (githubError) { %>
+    <p class="form-error form-error-top" role="alert">La connexion avec GitHub a échoué, réessayez.</p>
+  <% } %>
 
   <form data-endpoint="/api/login" data-redirect="/" class="form">
     <input type="email" name="email" placeholder="Email" autocomplete="email" required>
@@ -17,8 +20,9 @@
     <button type="submit" class="btn">Se connecter</button>
   </form>
 
-  <%# un vrai lien (pas un fetch) : le navigateur doit partir sur la page de Google %>
+  <%# de vrais liens (pas des fetch) : le navigateur doit partir sur la page du fournisseur %>
   <a href="/api/google" class="btn btn-google">Continuer avec Google</a>
+  <a href="/api/github" class="btn btn-github">Continuer avec GitHub</a>
 
   <a href="/register" class="link">Créer un compte</a>
 </section>

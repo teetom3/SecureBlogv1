@@ -68,6 +68,7 @@ app.get('/login', requireGuest, (req, res) => {
     title: 'Connexion',
     registered: req.query.registered === '1',
     googleError: req.query.error === 'google',
+    githubError: req.query.error === 'github',
   });
 });
 

@@ -6,6 +6,8 @@ const {
   logout,
   googleStart,
   googleCallback,
+  githubStart,
+  githubCallback,
 } = require("../controllers/auth.controller");
 const requireAuth = require("../middlewares/requireAuth");
 
@@ -17,5 +19,7 @@ router.get("/me", requireAuth, me);
 router.post("/logout", requireAuth, logout);
 router.get("/google", googleStart);
 router.get("/google/callback", googleCallback);
+router.get("/github", githubStart);
+router.get("/github/callback", githubCallback);
 
 module.exports = router;

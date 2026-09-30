@@ -59,3 +59,31 @@ exports.findOrCreateGoogleUser = async ({ googleId, email }) => {
 };
 
 exports.getUserById = (id) => User.findById(id);
+
+
+// Connexion GitHub : retrouve l'utilisateur, relie un compte existant, ou en crée un
+// (appelé uniquement avec l'email principal ET vérifié de GitHub, sinon la liaison serait une faille)
+exports.findOrCreateGithubUser = async ({ githubId, email }) => {
+  const byGithubId = await User.findOne({ githubId });
+  if (byGithubId) return byGithubId;
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const byEmail = await User.findOne({ email: normalizedEmail });
+
+  if (byEmail) {
+    // Le compte est déjà relié à un AUTRE compte GitHub : on refuse plutôt que d'écraser
+    if (byEmail.githubId && byEmail.githubId !== githubId) {
+      throw httpError(409, 'Ce compte est déjà relié à un autre compte GitHub');
+    }
+    byEmail.githubId = githubId;
+    return byEmail.save();
+  }
+
+  try {
+    return await User.create({ email: normalizedEmail, githubId });
+  } catch (err) {
+    // Deux callbacks simultanés (double clic) : le second tombe sur l'index unique
+    if (err.code === 11000) return User.findOne({ githubId });
+    throw err;
+  }
+};
