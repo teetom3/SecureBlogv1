@@ -1,0 +1,6 @@
+<form class="form" data-endpoint="<%= endpoint %>" data-redirect="<%= redirect %>" data-method="<%= method %>">
+    <input type="text" name="title" placeholder="Titre" maxlength="100" required value="<%= title %>">
+    <textarea name="content" placeholder="Contenu" rows="5" maxlength="2000" required><%= content %></textarea>
+    <p class="form-error" role="alert" hidden></p>
+    <button type="submit" class="btn">Enregistrer</button>
+</form>

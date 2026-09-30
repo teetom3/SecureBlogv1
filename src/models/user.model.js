@@ -1,30 +1,48 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, 'L\'email est requis'],
-    unique: true,
-    lowercase: true,
-    trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Format d\'email invalide'],
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: [true, "L'email est requis"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^\S+@\S+\.\S+$/, "Format d'email invalide"],
+    },
+    password: {
+      $cond: {
+        if: { $eq: ["$googleId", null] },
+        then: {
+          type: String,
+          required: [true, "Le mot de passe est requis"],
+          minlength: [8, "Le mot de passe doit contenir au moins 8 caractères"],
+          maxlength: [72, "Le mot de passe ne peut pas dépasser 72 caractères"], // limite de bcrypt
+          select: false,
+        },
+        else: {
+          type: String,
+          select: false,
+        },
+      },
+    },
+
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // permet à googleId d'être null pour les utilisateurs non-Google
+    },
   },
-  password: {
-    type: String,
-    required: [true, 'Le mot de passe est requis'],
-    minlength: [8, 'Le mot de passe doit contenir au moins 8 caractères'],
-    maxlength: [72, 'Le mot de passe ne peut pas dépasser 72 caractères'], // limite de bcrypt
-    select: false,
+  {
+    timestamps: true,
   },
-}, {
-  timestamps: true,
-});
+);
 
 // Hash du mot de passe avant sauvegarde
 // (la validation minlength/maxlength s'exécute avant, sur le mot de passe en clair)
-userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 12);
 });
 
@@ -34,7 +52,7 @@ userSchema.methods.comparePassword = function (candidatePassword) {
 };
 
 // Ne jamais exposer le hash dans les réponses JSON
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
   transform: (doc, ret) => {
     ret.id = ret._id.toString();
     delete ret._id;
@@ -44,4 +62,4 @@ userSchema.set('toJSON', {
   },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

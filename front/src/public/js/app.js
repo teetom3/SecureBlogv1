@@ -18,7 +18,7 @@ document.querySelectorAll('form[data-endpoint]').forEach((form) => {
 
     try {
       const response = await fetch(form.dataset.endpoint, {
-        method: 'POST',
+        method: form.dataset.method || 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });

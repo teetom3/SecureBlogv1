@@ -55,6 +55,14 @@ app.get('/', requireUser, async (req, res) => {
   res.render('dashboard', { title: 'Accueil', articles, formatDate });
 });
 
+app.get('/articles/:id/edit', requireUser, async (req, res) => {
+  const response = await fetch(`${API_URL}/api/articles/${encodeURIComponent(req.params.id)}`);
+  if (!response.ok) return res.redirect('/');
+  const { article } = await response.json();
+  if (article.author.id.toString() !== res.locals.user.id.toString()) return res.redirect('/');
+  res.render('edit', { title: 'Modifier l\'article', article });
+});
+
 app.get('/login', requireGuest, (req, res) => {
   res.render('login', { title: 'Connexion', registered: req.query.registered === '1' });
 });

@@ -25,6 +25,13 @@
     <p class="meta">
       <%= formatDate(article.createdAt) %>
       <% if (article.author) { %> · <%= article.author.email %><% } %>
+      <% if (article.author && article.author.id.toString() === user.id.toString()) { %>
+        · <a href="/articles/<%= article.id %>/edit">Modifier</a>
+        · <form data-endpoint="/api/articles/<%= article.id %>" data-redirect="/" data-method="DELETE" class="inline-form">
+          <button type="submit" class="link">Supprimer</button>
+        </form>
+      <% } %>
+
     </p>
   </article>
 <% }) %>

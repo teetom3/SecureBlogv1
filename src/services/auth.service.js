@@ -29,6 +29,8 @@ exports.register = async (email, password) => {
 exports.login = async (email, password) => {
   assertCredentials(email, password);
 
+  if(!password) throw httpError(400, 'Identifiants invalides');
+
   const user = await User.findOne({ email: email.trim().toLowerCase() }).select('+password');
 
   const valid = user

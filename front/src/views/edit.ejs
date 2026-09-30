@@ -1,0 +1,5 @@
+<%- include('partials/header') %>
+
+<%- include('partials/form', { endpoint: `/api/articles/${article.id}`, redirect: '/', method: 'PUT', title: article.title, content: article.content }) %>
+
+<%- include('partials/footer') %>
